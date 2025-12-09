@@ -1632,8 +1632,10 @@ namespace AvaloniaEdit.Rendering
             // Change back to default if hover on a different element
             if (_currentHoveredElement != element)
             {
+                _currentHoveredElement?.OnPointerExited(e);
                 Cursor = Parent?.GetValue(CursorProperty); // uses TextArea's ContentPresenter cursor
                 _currentHoveredElement = element;
+                element?.OnPointerEntered(e);
             }
 
             element?.OnQueryCursor(e);
