@@ -599,10 +599,15 @@ namespace AvaloniaEdit.Utils
             }
         }
 
-        internal static void VerifyArrayWithRange(Span<T> array, int arrayIndex, int count)
+        internal static void VerifyArrayWithRange(T[] array, int arrayIndex, int count)
         {
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
+            VerifyArrayWithRange(array.AsSpan(), arrayIndex, count);
+        }
+
+        internal static void VerifyArrayWithRange(Span<T> array, int arrayIndex, int count)
+        {
             if (arrayIndex < 0 || arrayIndex > array.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "0 <= arrayIndex <= " + array.Length.ToString(CultureInfo.InvariantCulture));
