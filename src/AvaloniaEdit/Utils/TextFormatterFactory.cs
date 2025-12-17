@@ -57,6 +57,11 @@ namespace AvaloniaEdit.Utils
 				typeface = element.CreateTypeface();
 			if (emSize == null)
 				emSize = TextElement.GetFontSize(element);
+			// protect against zero or negative font sizes
+			if (!(emSize > 0))
+			{
+				emSize = 12.0;
+			}
 			if (foreground == null)
 				foreground = TextElement.GetForeground(element);
 			
