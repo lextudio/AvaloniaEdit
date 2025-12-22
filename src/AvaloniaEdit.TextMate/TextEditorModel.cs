@@ -4,7 +4,7 @@ using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-
+using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 
 #if NET6_0_OR_GREATER
@@ -69,7 +69,7 @@ namespace AvaloniaEdit.TextMate
             return _documentSnapshot.LineCount;
         }
 
-        public override string GetLineText(int lineIndex)
+        public override LineText GetLineTextIncludingTerminators(int lineIndex)
         {
             return _documentSnapshot.GetLineText(lineIndex);
         }
