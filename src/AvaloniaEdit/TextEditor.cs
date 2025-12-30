@@ -1277,6 +1277,64 @@ namespace AvaloniaEdit
         }
 
         /// <summary>
+        /// Gets the text view position from a point inside the editor, with fallback probing for empty lines.
+        /// </summary>
+        public TextViewPosition? GetPositionFromPointWithFallback(Point point)
+        {
+            if (Document == null)
+                return null;
+
+            var position = GetPositionFromPoint(point);
+            if (position == null || IsValidTextViewPosition(position.Value))
+                return position;
+
+            var line = Document.GetLineByNumber(position.Value.Line);
+            if (line.Length != 0)
+                return position;
+
+            var textView = TextArea.TextView;
+            if (textView == null)
+                return position;
+
+            var step = Math.Max(1.0, textView.DefaultLineHeight);
+            if (TryGetValidPosition(point, step, out var probe))
+                return probe;
+
+            double[] probes = { 3.0, 8.0, -3.0, -8.0 };
+            foreach (var d in probes)
+            {
+                if (TryGetValidPosition(point, d, out probe))
+                    return probe;
+            }
+
+            return position;
+        }
+
+        bool TryGetValidPosition(Point point, double yOffset, out TextViewPosition result)
+        {
+            var probePoint = new Point(point.X, point.Y + yOffset);
+            var probePos = GetPositionFromPoint(probePoint);
+            if (probePos != null && IsValidTextViewPosition(probePos.Value))
+            {
+                result = probePos.Value;
+                return true;
+            }
+            result = default;
+            return false;
+        }
+
+        bool IsValidTextViewPosition(TextViewPosition textViewPosition)
+        {
+            if (Document == null)
+                return false;
+            var lineCount = Document.LineCount;
+            if (textViewPosition.Line <= 0 || textViewPosition.Line > lineCount)
+                return false;
+            var line = Document.GetLineByNumber(textViewPosition.Line);
+            return textViewPosition.Column != line.Length + 1;
+        }
+
+        /// <summary>
         /// Scrolls to the specified line.
         /// This method requires that the TextEditor was already assigned a size (layout engine must have run prior).
         /// </summary>
